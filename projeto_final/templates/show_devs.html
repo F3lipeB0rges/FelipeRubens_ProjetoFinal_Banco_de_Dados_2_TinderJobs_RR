@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Desenvolvedores{% endblock %}
+
+{% block content %}
+<div id='containerHome' class="container">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <img 
+                src="/static/images/tinder-icon.png"
+                alt='Logo projeto' width="100px"/>
+            <h2>Desenvolvedores</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 mt-3">
+            <div class="card text-center" id='optionDev'>
+                <div class="card-body">
+                    <img id="dev-logo" class="img-fluid" src="/static/images/perfil-dev.png" alt="Foto do Desenvolvedor" style="max-width: 100px; border-radius: 8px; margin-bottom: 5px;">
+                    <h5 id="dev-name" class="card-title" style="color:#fff; margin-top: 5px; margin-bottom: 5px;"></h5>
+                    <p id="dev-skills" class="card-text" style="color: #fff; margin-bottom: 15px;"></p>
+                    <a id="mostrar-interesse" class="btn btn-custom">Mostrar Interesse</a>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <button id="prev-button" class="btn btn-custom">← Anterior</button>
+                <button id="next-button" class="btn btn-custom">Próximo →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentIndex = 0;  // Índice atual
+    let devs = [];  // Armazena os desenvolvedores
+    let empHabilidades = []; // Armazena as habilidades exigidas pela empresa
+    
+    function loadDevs() {
+    fetch('/empresa/devs/data')  // Endpoint para buscar os dados dos desenvolvedores
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Rede não está OK');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dados recebidos:", data);  // Verifique os dados retornados
+            devs = data;  // Armazena os dados dos desenvolvedores
+            if (devs.length === 0) {
+                console.error("Nenhum desenvolvedor encontrado."); // Se não houver desenvolvedores
+            }
+            displayDev();  // Exibe o primeiro desenvolvedor
+            updateButtons();  // Atualiza a visibilidade dos botões
+        })
+        .catch(error => {
+            console.error('Erro ao carregar desenvolvedores:', error); // Capture erros
+        });
+    }
+
+    function loadEmpHabilidades() {
+        fetch('/empresa/habilidades') 
+            .then(response => response.json())
+            .then(data => {
+                try {
+                    empHabilidades = data.habilidades.split(',').map(skill => skill.trim().toLowerCase());
+                } catch (error) {
+                    console.error('Erro ao processar as habilidades:', error);
+                    console.error('Dados recebidos:', data);
+                }
+            });
+    }
+
+    
+    function displayDev() {
+        if (devs.length > 0) {
+            const dev = devs[currentIndex];
+            document.getElementById("dev-name").innerText = dev.name;
+            document.getElementById("dev-skills").innerText = dev.skills.join(', ');  // Supondo que as habilidades venham em um array
+        }
+    }
+    
+    function updateButtons() {
+        document.getElementById("prev-button").style.display = currentIndex > 0 ? "inline-block" : "none";
+        document.getElementById("next-button").style.display = currentIndex < devs.length - 1 ? "inline-block" : "none";
+    }
+    
+    document.getElementById("next-button").addEventListener("click", () => {
+        if (currentIndex < devs.length - 1) {
+            currentIndex++;
+            displayDev();
+            updateButtons();
+        }
+    });
+    
+    document.getElementById("prev-button").addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayDev();
+            updateButtons();
+        }
+    });
+
+    document.getElementById("mostrar-interesse").addEventListener("click", () => {
+        const dev = devs[currentIndex];
+        const habilidadesDev = dev.skills.map(skill => skill.trim().toLowerCase());
+
+        // Normaliza as habilidades exigidas pela empresa 
+        const normalizedEmpHabilidades = empHabilidades.map(skill => skill.trim().toLowerCase());
+
+        console.log("Habilidades do Dev:", habilidadesDev);  // Log para depuração
+        console.log("Habilidades da empresa:", normalizedEmpHabilidades);  // Log para depuração
+
+        // Verifica se todas as habilidades do dev atendem as habilidades da empresa
+        const match = habilidadesDev.every(skill => normalizedEmpHabilidades.includes(skill));
+    
+        if (match) {
+            alert('Match encontrado! O Dev tem as habilidades exigidas.');
+        } else {
+            alert('Que pena, o Dev não atende a todos os requisitos de habilidades.');
+        }
+    });
+
+    // Carrega os devs e as habilidades exigidas pela empresa ao iniciar
+    loadDevs();
+    loadEmpHabilidades();
+    
+</script>
+{% endblock %}

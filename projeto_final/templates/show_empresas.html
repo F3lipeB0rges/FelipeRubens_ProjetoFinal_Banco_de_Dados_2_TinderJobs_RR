@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Empresas{% endblock %}
+
+{% block content %}
+<div id='containerHome' class="container">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <img 
+                src="/static/images/tinder-icon.png"
+                alt='Logo projeto' width="100px"/>
+            <h2>Empresas</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 mt-3">
+            <div class="card text-center" id='optionEmp'>
+                <div class="card-body">
+                    <img id="empresa-logo" class="img-fluid" src="/static/images/perfil-emp.png" alt="Logo da Empresa" style="max-width: 100px; border-radius: 8px; margin-bottom: 5px;">
+                    <h5 id="empresa-name" class="card-title" style="color:#fff; margin-top: 5px; margin-bottom: 5px;"></h5>
+                    <p id="empresa-description" class="card-text" style="color: #fff; margin-bottom: 15px;"></p>
+                    <button id="mostrar-interesse" class="btn btn-custom">Mostrar Interesse</button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <button id="prev-button" class="btn btn-custom">← Anterior</button>
+                <button id="next-button" class="btn btn-custom">Próximo →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentIndex = 0;  // Índice atual
+    let empresas = [];  // Armazena as empresas
+    let devHabilidades = [];  // Armazena as habilidades do desenvolvedor
+
+    function loadEmpresas() {
+        fetch('/dev/empresas/data')  // Endpoint para buscar os dados das empresas
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Rede não está OK');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Dados recebidos:", data);  // Verifique os dados retornados
+                empresas = data;  // Armazena os dados das empresas
+                if (empresas.length === 0) {
+                    console.error("Nenhuma empresa encontrada."); // Se não houver empresas
+                }
+                displayEmpresa();  // Exibe a primeira empresa
+                updateButtons();  // Atualiza a visibilidade dos botões
+            })
+            .catch(error => {
+                console.error('Erro ao carregar empresas:', error); // Capture erros
+            });
+    }
+
+    function loadDevHabilidades() {
+        fetch('/dev/habilidades')  // Endpoint para buscar as habilidades do desenvolvedor
+            .then(response => response.json())
+            .then(data => {
+                devHabilidades = data.habilidades.split(',').map(skill => skill.trim().toLowerCase());
+            });
+    }
+
+    function displayEmpresa() {
+        if (empresas.length > 0) {
+            const empresa = empresas[currentIndex];
+            document.getElementById("empresa-name").innerText = empresa.name;
+            document.getElementById("empresa-description").innerText = empresa.description;
+        }
+    }
+
+    function updateButtons() {
+        document.getElementById("prev-button").style.display = currentIndex > 0 ? "inline-block" : "none";
+        document.getElementById("next-button").style.display = currentIndex < empresas.length - 1 ? "inline-block" : "none";
+    }
+
+    document.getElementById("next-button").addEventListener("click", () => {
+        if (currentIndex < empresas.length - 1) {
+            currentIndex++;
+            displayEmpresa();
+            updateButtons();
+        }
+    });
+
+    document.getElementById("prev-button").addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayEmpresa();
+            updateButtons();
+        }
+    });
+
+    document.getElementById("mostrar-interesse").addEventListener("click", () => {
+        const empresa = empresas[currentIndex];
+        const habilidadesEmpresa = empresa.description.split(',').map(skill => skill.trim().toLowerCase());
+
+        // Normaliza as habilidades do desenvolvedor
+        const normalizedDevHabilidades = devHabilidades.map(skill => skill.trim().toLowerCase());
+
+        console.log("Habilidades da empresa:", habilidadesEmpresa);  // Log para depuração
+        console.log("Habilidades do desenvolvedor:", normalizedDevHabilidades);  // Log para depuração
+
+        // Verifica se todas as habilidades da empresa estão nas habilidades do desenvolvedor
+        const match = habilidadesEmpresa.every(skill => normalizedDevHabilidades.includes(skill));
+    
+        if (match) {
+            alert('Match encontrado! Você tem as habilidades exigidas por esta empresa.');
+        } else {
+            alert('Desculpe, você não atende a todos os requisitos de habilidades.');
+        }
+    });
+
+    // Carrega as empresas e as habilidades do desenvolvedor ao iniciar
+    loadEmpresas();
+    loadDevHabilidades();
+</script>
+{% endblock %}

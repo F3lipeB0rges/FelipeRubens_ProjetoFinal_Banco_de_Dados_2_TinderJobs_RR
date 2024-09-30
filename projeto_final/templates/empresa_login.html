@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Empresa Login{% endblock %}
+
+{% block content %}
+<div id='containerHome' class="container">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <img
+                src="/static/images/tinder-icon.png"
+                alt='Logo projeto' width="100px"/>
+            <h2>Empresa Login</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <form method="POST">
+                <div class="form-outline mb-4">
+                    <input type="email" id="email" name="email" class="form-control" required />
+                    <label class="form-label" for="email">E-mail</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="password" id="password" name="password" class="form-control" required />
+                    <label class="form-label" for="password">Senha</label>
+                </div>
+
+                <button type="submit" class="btn btn-custom">Entrar</button>
+
+                <div class="text-center">
+                    <p>Não é membro? <a href="{{ url_for('empresa_register') }}">Registre-se</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

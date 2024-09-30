@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Dev Cadastro{% endblock %}
+
+{% block content %}
+<div id='containerHome' class="container">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <img
+                src="/static/images/tinder-icon.png"
+                alt='Logo projeto' width="100px"/>
+            <h2>Dev Cadastro</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <form method="POST">
+                <!-- Inclui o token CSRF -->
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-control", placeholder="Nome do Desenvolvedor") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control", placeholder="E-mail") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.cel.label(class="form-label") }}
+                    {{ form.cel(class="form-control", placeholder="Celular") }}
+                </div>
+                <div class="mb-3">
+                  {{ form.habilidades.label(class="form-label") }}
+                  {{ form.habilidades(class="form-control", placeholder="Habilidades, separadas, por, vírgula") }}
+              </div>              
+                <div class="mb-3">
+                  {{ form.password.label(class="form-label") }}
+                  {{ form.password(class="form-control", placeholder="Senha") }}
+              </div>
+                <div class="mb-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
