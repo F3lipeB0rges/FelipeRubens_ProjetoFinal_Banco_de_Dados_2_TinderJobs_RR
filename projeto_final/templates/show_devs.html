@@ -30,12 +30,12 @@
 </div>
 
 <script>
-    let currentIndex = 0;  // Índice atual
-    let devs = [];  // Armazena os desenvolvedores
-    let empHabilidades = []; // Armazena as habilidades exigidas pela empresa
+    let currentIndex = 0; 
+    let devs = []; 
+    let empHabilidades = [];
     
     function loadDevs() {
-    fetch('/empresa/devs/data')  // Endpoint para buscar os dados dos desenvolvedores
+    fetch('/empresa/devs/data') 
         .then(response => {
             if (!response.ok) {
                 throw new Error('Rede não está OK');
@@ -43,16 +43,16 @@
             return response.json();
         })
         .then(data => {
-            console.log("Dados recebidos:", data);  // Verifique os dados retornados
-            devs = data;  // Armazena os dados dos desenvolvedores
+            console.log("Dados recebidos:", data);  
+            devs = data;  
             if (devs.length === 0) {
-                console.error("Nenhum desenvolvedor encontrado."); // Se não houver desenvolvedores
+                console.error("Nenhum desenvolvedor encontrado.");
             }
-            displayDev();  // Exibe o primeiro desenvolvedor
-            updateButtons();  // Atualiza a visibilidade dos botões
+            displayDev(); 
+            updateButtons();  
         })
         .catch(error => {
-            console.error('Erro ao carregar desenvolvedores:', error); // Capture erros
+            console.error('Erro ao carregar desenvolvedores:', error);
         });
     }
 
@@ -74,7 +74,7 @@
         if (devs.length > 0) {
             const dev = devs[currentIndex];
             document.getElementById("dev-name").innerText = dev.name;
-            document.getElementById("dev-skills").innerText = dev.skills.join(', ');  // Supondo que as habilidades venham em um array
+            document.getElementById("dev-skills").innerText = dev.skills.join(', '); 
         }
     }
     
@@ -103,13 +103,11 @@
         const dev = devs[currentIndex];
         const habilidadesDev = dev.skills.map(skill => skill.trim().toLowerCase());
 
-        // Normaliza as habilidades exigidas pela empresa 
         const normalizedEmpHabilidades = empHabilidades.map(skill => skill.trim().toLowerCase());
 
-        console.log("Habilidades do Dev:", habilidadesDev);  // Log para depuração
-        console.log("Habilidades da empresa:", normalizedEmpHabilidades);  // Log para depuração
+        console.log("Habilidades do Dev:", habilidadesDev); 
+        console.log("Habilidades da empresa:", normalizedEmpHabilidades); 
 
-        // Verifica se todas as habilidades do dev atendem as habilidades da empresa
         const match = habilidadesDev.every(skill => normalizedEmpHabilidades.includes(skill));
     
         if (match) {
@@ -119,7 +117,6 @@
         }
     });
 
-    // Carrega os devs e as habilidades exigidas pela empresa ao iniciar
     loadDevs();
     loadEmpHabilidades();
     
