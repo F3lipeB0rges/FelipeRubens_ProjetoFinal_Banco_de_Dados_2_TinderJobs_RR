@@ -30,12 +30,12 @@
 </div>
 
 <script>
-    let currentIndex = 0;  // Índice atual
-    let empresas = [];  // Armazena as empresas
-    let devHabilidades = [];  // Armazena as habilidades do desenvolvedor
+    let currentIndex = 0;
+    let empresas = [];  
+    let devHabilidades = []; 
 
     function loadEmpresas() {
-        fetch('/dev/empresas/data')  // Endpoint para buscar os dados das empresas
+        fetch('/dev/empresas/data')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Rede não está OK');
@@ -43,21 +43,21 @@
                 return response.json();
             })
             .then(data => {
-                console.log("Dados recebidos:", data);  // Verifique os dados retornados
-                empresas = data;  // Armazena os dados das empresas
+                console.log("Dados recebidos:", data);
+                empresas = data; 
                 if (empresas.length === 0) {
-                    console.error("Nenhuma empresa encontrada."); // Se não houver empresas
+                    console.error("Nenhuma empresa encontrada.");
                 }
-                displayEmpresa();  // Exibe a primeira empresa
-                updateButtons();  // Atualiza a visibilidade dos botões
+                displayEmpresa(); 
+                updateButtons();
             })
             .catch(error => {
-                console.error('Erro ao carregar empresas:', error); // Capture erros
+                console.error('Erro ao carregar empresas:', error);
             });
     }
 
     function loadDevHabilidades() {
-        fetch('/dev/habilidades')  // Endpoint para buscar as habilidades do desenvolvedor
+        fetch('/dev/habilidades')
             .then(response => response.json())
             .then(data => {
                 devHabilidades = data.habilidades.split(',').map(skill => skill.trim().toLowerCase());
@@ -97,13 +97,11 @@
         const empresa = empresas[currentIndex];
         const habilidadesEmpresa = empresa.description.split(',').map(skill => skill.trim().toLowerCase());
 
-        // Normaliza as habilidades do desenvolvedor
         const normalizedDevHabilidades = devHabilidades.map(skill => skill.trim().toLowerCase());
 
-        console.log("Habilidades da empresa:", habilidadesEmpresa);  // Log para depuração
-        console.log("Habilidades do desenvolvedor:", normalizedDevHabilidades);  // Log para depuração
+        console.log("Habilidades da empresa:", habilidadesEmpresa);
+        console.log("Habilidades do desenvolvedor:", normalizedDevHabilidades);
 
-        // Verifica se todas as habilidades da empresa estão nas habilidades do desenvolvedor
         const match = habilidadesEmpresa.every(skill => normalizedDevHabilidades.includes(skill));
     
         if (match) {
@@ -113,7 +111,6 @@
         }
     });
 
-    // Carrega as empresas e as habilidades do desenvolvedor ao iniciar
     loadEmpresas();
     loadDevHabilidades();
 </script>
