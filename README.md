@@ -1,1 +1,5 @@
-# FelipeRubens_ProjetoFinal_Banco_de_Dados_2_TinderJobs_RR
+# ProjetoFinal de Banco de Dados 2
+
+## Tinder Jobs
+
+### Desenvolvido por Felipe Rubens de Sousa Borges
